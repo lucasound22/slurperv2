@@ -1,5 +1,4 @@
-/* Slurper v4 - UI & Ecom - FIXED */
-
+/* Slurper v5.1 - UI & Ecom - FIXED */
 function addToCart(id){
 var wine=JOVAL_WINES.find(function(j){return j.id===id});
 if(!wine){showToast("Wine not found");return;}
@@ -14,14 +13,12 @@ state.cart.push({id:id,name:wine.name,price:wine.price,qty:1,grape:wine.grape});
 reserveStock(id,1);
 saveState();updateCartBadge();showToast("Added to cart!");addXP(1);
 }
-
 function removeFromCart(idx){
 var item=state.cart[idx];
 if(item){reserveStock(item.id,-item.qty)}
 state.cart.splice(idx,1);
 saveState();updateCartBadge();renderCart();
 }
-
 function changeCartQty(idx,delta){
 var item=state.cart[idx];if(!item)return;
 var newQty=item.qty+delta;
@@ -32,7 +29,6 @@ item.qty=newQty;
 reserveStock(item.id,delta);
 saveState();updateCartBadge();renderCart();
 }
-
 function getCartTotal(){
 var sub=0;
 state.cart.forEach(function(c){sub+=c.price*c.qty});
@@ -45,17 +41,14 @@ else disc=sub*(cp.pct/100);
 }}
 return{subtotal:sub,discount:disc,total:Math.max(0,sub-disc),shipping:sub>=100?0:9.95};
 }
-
 function getCartCount(){
 var c=0;state.cart.forEach(function(i){c+=i.qty});return c;
 }
-
 function updateCartBadge(){
 var c=getCartCount();
 var badge=document.getElementById("nav-cart-badge");
 if(badge){badge.textContent=c;badge.style.display=c>0?"inline":"none";}
 }
-
 function renderCart(){
 var el=document.getElementById("cart-items");
 var empty=document.getElementById("cart-empty");
@@ -70,7 +63,7 @@ return;
 if(empty)empty.style.display="none";
 if(summary)summary.classList.remove("hid");
 el.innerHTML=state.cart.map(function(item,idx){
-return'<div class="gi"><div class="gi-c" style="background:var(--sunbg)">'+String.fromCodePoint(0x1F377)+'</div><div class="gi-i"><div class="gi-n">'+item.name+'</div><div class="gi-s">$'+item.price+' each</div><div style="display:flex;align-items:center;gap:8px;margin-top:6px"><button class="btn btn-xs btn-ghost" onclick="changeCartQty('+idx+',-1)">-</button><span style="font-weight:900">'+item.qty+'</span><button class="btn btn-xs btn-ghost" onclick="changeCartQty('+idx+',1)">+</button><button class="btn btn-xs btn-ghost" onclick="removeFromCart('+idx+')" style="margin-left:auto;color:var(--coral)">Remove</button></div></div></div>';
+return "<div class=\"gi\"><div class=\"gi-c\" style=\"background:var(--peach)\">"+String.fromCodePoint(0x1F377)+"</div><div class=\"gi-i\"><div class=\"gi-n\">"+item.name+"</div><div class=\"gi-s\">$"+item.price+" each</div><div style=\"margin-top:6px;display:flex;align-items:center;gap:8px\"><button class=\"btn btn-xs btn-ghost\" onclick=\"changeCartQty("+idx+",-1)\">-</button><span style=\"font-weight:900\">"+item.qty+"</span><button class=\"btn btn-xs btn-ghost\" onclick=\"changeCartQty("+idx+",1)\">+</button><button class=\"btn btn-xs btn-ghost\" style=\"color:var(--coral);margin-left:auto\" onclick=\"removeFromCart("+idx+")\">Remove</button></div></div></div>";
 }).join("");
 var totals=getCartTotal();
 var ct=document.getElementById("cart-total");if(ct)ct.textContent="$"+totals.total.toFixed(2);
@@ -79,32 +72,29 @@ var cs=document.getElementById("cart-savings");
 if(cs)cs.textContent=totals.discount>0?"You save $"+totals.discount.toFixed(2):"";
 var pb=document.getElementById("cart-promo-banner");
 if(pb&&state.promoBanner&&state.promoBanner.text){
-pb.innerHTML='<div class="promo-banner" onclick="nav(\''+state.promoBanner.link+'\')">'+state.promoBanner.text+'</div>';
+pb.innerHTML="<div class=\"card\" style=\"background:var(--sunbg);text-align:center;font-weight:700\">"+state.promoBanner.text+"</div>";
 }
 }
-
 function startCheckout(){
 var el=document.getElementById("checkout-content");if(!el)return;
 var totals=getCartTotal();
-var h='<div class="card"><div class="sect">Order Summary</div>';
-state.cart.forEach(function(item){h+='<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0e8e0"><span style="font-weight:700">'+item.name+' x'+item.qty+'</span><span style="font-weight:800">$'+(item.price*item.qty).toFixed(2)+'</span></div>'});
-h+='<div style="display:flex;justify-content:space-between;padding:8px 0;font-weight:900;font-size:1.1rem;border-top:2px solid var(--coral);margin-top:8px"><span>Total</span><span>$'+totals.total.toFixed(2)+'</span></div>';
-if(totals.shipping>0)h+='<div style="font-size:.78rem;color:#999">+ $'+totals.shipping.toFixed(2)+' shipping (free over $100)</div>';
-else h+='<div style="font-size:.78rem;color:var(--mint);font-weight:700">Free shipping!</div>';
-h+='</div>';
-h+='<div class="card"><div class="sect">Your Details</div>';
-h+='<input type="text" id="checkout-name" placeholder="Full name">';
-h+='<input type="email" id="checkout-email" placeholder="Email">';
-h+='<input type="tel" id="checkout-phone" placeholder="Phone">';
-h+='<input type="text" id="checkout-address" placeholder="Delivery address">';
-h+='<input type="text" id="checkout-coupon" placeholder="Promo code (optional)" style="text-transform:uppercase">';
-h+='<button class="btn btn-sun mt2" onclick="applyCheckoutCoupon()">Apply Code</button>';
-h+='</div>';
-h+='<button class="btn btn-coral mt2" onclick="placeOrder()">Place Order - $'+totals.total.toFixed(2)+'</button>';
+var h="<div class=\"sect\">Order Summary</div>";
+state.cart.forEach(function(item){h+="<div style=\"display:flex;justify-content:space-between;padding:6px 0;font-size:.9rem\"><span>"+item.name+" x"+item.qty+"</span><span style=\"font-weight:700\">$"+(item.price*item.qty).toFixed(2)+"</span></div>"});
+h+="<div style=\"display:flex;justify-content:space-between;padding:10px 0;border-top:2px solid var(--denim);font-weight:900;font-size:1.1rem\"><span>Total</span><span>$"+totals.total.toFixed(2)+"</span></div>";
+if(totals.shipping>0)h+="<div style=\"font-size:.82rem;color:#7A8A8A;margin-bottom:12px\">+ $"+totals.shipping.toFixed(2)+" shipping (free over $100)</div>";
+else h+="<div style=\"font-size:.82rem;color:var(--sage);margin-bottom:12px;font-weight:700\">Free shipping!</div>";
+h+="<div class=\"sect mt3\">Your Details</div>";
+h+="<input id=\"checkout-name\" class=\"input\" placeholder=\"Name\" style=\"margin-bottom:8px\">";
+h+="<input id=\"checkout-email\" class=\"input\" placeholder=\"Email\" style=\"margin-bottom:8px\">";
+h+="<input id=\"checkout-addr\" class=\"input\" placeholder=\"Delivery address\" style=\"margin-bottom:8px\">";
+h+="<input id=\"checkout-phone\" class=\"input\" placeholder=\"Phone\" style=\"margin-bottom:12px\">";
+h+="<input id=\"checkout-coupon\" class=\"input\" placeholder=\"Promo code\" style=\"margin-bottom:8px\">";
+h+="<button class=\"btn btn-ghost btn-sm\" onclick=\"applyCheckoutCoupon()\">Apply Code</button>";
+h+="<div style=\"height:16px\"></div>";
+h+="<button class=\"btn btn-coral\" onclick=\"placeOrder()\" style=\"width:100%\">Place Order - $"+totals.total.toFixed(2)+"</button>";
 el.innerHTML=h;
 nav("screen-checkout");
 }
-
 function applyCheckoutCoupon(){
 var code=(document.getElementById("checkout-coupon").value||"").toUpperCase().trim();
 if(!code)return;
@@ -112,7 +102,6 @@ var c=state.adminCoupons.find(function(x){return x.code===code&&!x.used});
 if(c){state.checkoutCoupon=code;showToast(c.pct+(c.type==="dollar"?"$ off":"% off")+" applied!");startCheckout();}
 else{showToast("Invalid code")}
 }
-
 function placeOrder(){
 var name=(document.getElementById("checkout-name").value||"").trim();
 var email=(document.getElementById("checkout-email").value||"").trim();
@@ -121,13 +110,14 @@ state.cart.forEach(function(item){commitStock(item.id,item.qty)});
 var totals=getCartTotal();
 var order={id:Date.now(),items:state.cart.slice(),total:totals.total,name:name,email:email,date:Date.now()};
 state.orders.push(order);
+if(typeof logActivity==="function")logActivity("order","Placed order #"+order.id);
 state.totalRevenue=(state.totalRevenue||0)+totals.total;
 if(state.emailSubs.indexOf(email)<0)state.emailSubs.push(email);
 state.cart=[];state.checkoutCoupon=null;
 saveState();updateCartBadge();
 addXP(20);checkBadges();
 showToast("Order placed!");
-document.getElementById("checkout-content").innerHTML='<div class="tc"><div style="font-size:4rem;margin:20px 0">'+String.fromCodePoint(0x1F389)+'</div><h2 style="font-weight:900">Order Confirmed!</h2><p style="color:#999;margin:12px 0">Order #'+order.id+'</p><p style="font-weight:700">$'+totals.total.toFixed(2)+'</p><button class="btn btn-purple mt3" onclick="nav(\'screen-splash\')">Home</button></div>';
+document.getElementById("checkout-content").innerHTML="<div class=\"rh bounce\" style=\"background:var(--mintbg)\"><div style=\"font-size:4rem\">"+String.fromCodePoint(0x1F389)+"</div><h3 style=\"font-weight:900\">Order Confirmed!</h3></div><div class=\"pad\"><p>Order #"+order.id+"</p><p style=\"font-size:1.2rem;font-weight:900;color:var(--coral)\">$"+totals.total.toFixed(2)+"</p><button class=\"btn btn-coral mt3\" onclick=\"nav('screen-splash')\">Home</button></div>";
 }
 
 /* ===== LEVELS & XP ===== */
@@ -140,7 +130,6 @@ var LEVELS=[
 {name:"Connoisseur",emoji:String.fromCodePoint(0x1F3C6),min:120},
 {name:"Sommelier",emoji:String.fromCodePoint(0x1F451),min:200}
 ];
-
 function getLevel(xp){
 var lvl=LEVELS[0];
 for(var i=0;i<LEVELS.length;i++){if(xp>=LEVELS[i].min)lvl=LEVELS[i];}
@@ -148,26 +137,26 @@ return lvl;
 }
 function getNextLevel(xp){
 for(var i=0;i<LEVELS.length;i++){if(xp<LEVELS[i].min)return LEVELS[i];}
-return null;
+return LEVELS[LEVELS.length-1];
 }
-function addXP(amount){
-state.xp=(state.xp||0)+amount;saveState();
+function addXP(pts){
+state.xp=(state.xp||0)+pts;
 var lvl=getLevel(state.xp);
-var el=document.getElementById("level-emoji");if(el)el.textContent=lvl.emoji;
-var en=document.getElementById("level-name");if(en)en.textContent=lvl.name;
 var next=getNextLevel(state.xp);
-var bar=document.getElementById("level-progress");
-var xpEl=document.getElementById("level-xp");
-if(next&&bar){
-var pct=((state.xp-lvl.min)/(next.min-lvl.min)*100).toFixed(0);
-bar.style.width=pct+"%";
-if(xpEl)xpEl.textContent=state.xp+" / "+next.min+" XP";
-}else if(bar){bar.style.width="100%";if(xpEl)xpEl.textContent=state.xp+" XP - MAX!";}
+var le=document.getElementById("level-emoji");
+var ln=document.getElementById("level-name");
+var lp=document.getElementById("level-progress");
+var lx=document.getElementById("level-xp");
+if(le)le.textContent=lvl.emoji;
+if(ln)ln.textContent=lvl.name;
+if(lp){var pct=next.min>lvl.min?((state.xp-lvl.min)/(next.min-lvl.min)*100):100;lp.style.width=Math.min(100,pct)+"%";}
+if(lx)lx.textContent=state.xp+" / "+next.min+" XP";
+saveState();
 }
 
 /* ===== BADGES ===== */
 var ALL_BADGES=[
-{id:"first_scan",name:"First Sip",emoji:String.fromCodePoint(0x1F377),desc:"Scan your first wine",check:function(){return(state.totalScans||0)>=1}},
+{id:"first_scan",name:"First Sip",emoji:String.fromCodePoint(0x1F943),desc:"Scan your first wine",check:function(){return(state.totalScans||0)>=1}},
 {id:"five_scans",name:"Wine Curious",emoji:String.fromCodePoint(0x1F50D),desc:"Scan 5 wines",check:function(){return(state.totalScans||0)>=5}},
 {id:"ten_scans",name:"Label Reader",emoji:String.fromCodePoint(0x1F4F7),desc:"Scan 10 wines",check:function(){return(state.totalScans||0)>=10}},
 {id:"first_fav",name:"Heart Breaker",emoji:String.fromCodePoint(0x2764),desc:"Fave your first wine",check:function(){return state.favorites.length>=1}},
@@ -184,22 +173,21 @@ var ALL_BADGES=[
 {id:"streak3",name:"On a Roll",emoji:String.fromCodePoint(0x1F525),desc:"3-day streak",check:function(){return(state.streak||0)>=3}},
 {id:"explorer",name:"Globe Trotter",emoji:String.fromCodePoint(0x1F30D),desc:"Try 10 regions",check:function(){return state.journey&&state.journey.regions&&state.journey.regions.size>=10}}
 ];
-
 function checkBadges(){
 ALL_BADGES.forEach(function(b){
 if(state.badges.indexOf(b.id)<0&&b.check()){
 state.badges.push(b.id);showToast(b.emoji+" "+b.name+" unlocked!");addXP(5);
+if(typeof logActivity==="function")logActivity("badge","Unlocked: "+b.name);
 }});saveState();
 }
-
 function renderBadges(){
 var eg=document.getElementById("badges-grid");
 var lg=document.getElementById("badges-locked");
 if(!eg||!lg)return;
 var earned=ALL_BADGES.filter(function(b){return state.badges.indexOf(b.id)>-1});
 var locked=ALL_BADGES.filter(function(b){return state.badges.indexOf(b.id)<0});
-eg.innerHTML=earned.length?earned.map(function(b){return'<div class="cc"><div style="font-size:1.8rem">'+b.emoji+'</div><div style="font-size:.7rem;font-weight:800;margin-top:4px">'+b.name+'</div></div>'}).join(""):'<div class="tc" style="grid-column:1/-1;color:#999;padding:12px">None yet!</div>';
-lg.innerHTML=locked.map(function(b){return'<div class="cc" style="opacity:.4"><div style="font-size:1.8rem">'+String.fromCodePoint(0x1F512)+'</div><div style="font-size:.7rem;font-weight:800;margin-top:4px">'+b.desc+'</div></div>'}).join("");
+eg.innerHTML=earned.length?earned.map(function(b){return "<div class=\"badge-card earned\"><div style=\"font-size:2rem\">"+b.emoji+"</div><div style=\"font-size:.78rem;font-weight:700;margin-top:4px\">"+b.name+"</div></div>"}).join(""):"<div class=\"card tc\"><p style=\"color:#7A8A8A\">None yet!</p></div>";
+lg.innerHTML=locked.map(function(b){return "<div class=\"badge-card locked\"><div style=\"font-size:2rem\">"+String.fromCodePoint(0x1F512)+"</div><div style=\"font-size:.78rem;color:#aaa;margin-top:4px\">"+b.desc+"</div></div>"}).join("");
 addXP(0);
 }
 
@@ -212,14 +200,12 @@ var el=document.getElementById("challenge-preview");
 if(el)el.textContent=challenges[idx];
 return challenges[idx];
 }
-
 function renderChallenge(){
 var el=document.getElementById("challenge-content");if(!el)return;
 var ch=state.dailyChallenge||getDailyChallenge();
 var done=state.challengeDone&&state.challengeDay===new Date().toDateString();
-el.innerHTML='<div class="card tc"><div style="font-size:3rem;margin-bottom:8px">'+String.fromCodePoint(0x1F3AF)+'</div><h2 style="font-weight:900">Today\'s Challenge</h2><p style="color:#999;margin:12px 0;font-size:1rem;line-height:1.6">'+ch+'</p>'+(done?'<div class="badge badge-mint" style="font-size:.9rem;padding:8px 20px">Completed!</div>':'<button class="btn btn-purple mt2" onclick="completeChallenge()">Done!</button>')+'</div>';
+el.innerHTML="<div class=\"rh\" style=\"background:var(--sunbg)\"><div style=\"font-size:3rem\">"+String.fromCodePoint(0x1F3AF)+"</div><h3 style=\"font-weight:900\">Today's Challenge</h3></div><div class=\"pad\"><p style=\"font-size:1.1rem;line-height:1.7;font-weight:600\">"+ch+"</p>"+(done?"<div class=\"card tc\" style=\"background:var(--mintbg);font-weight:900;color:var(--sage)\">Completed!</div>":"<button class=\"btn btn-coral mt3\" onclick=\"completeChallenge()\">Done!</button>")+"</div>";
 }
-
 function completeChallenge(){
 state.challengeDone=true;state.challengeDay=new Date().toDateString();
 state.streak=(state.streak||0)+1;
@@ -241,8 +227,8 @@ showWineResult(rk,"shake");showToast("Shake detected!");}
 /* ===== CHEESE ===== */
 function renderCheese(){
 var el=document.getElementById("cheese-grid");if(!el)return;
-if(typeof CHEESE_DB==="undefined"||!CHEESE_DB){el.innerHTML='<p style="color:#999;text-align:center">Cheese data loading...</p>';return;}
-el.innerHTML=CHEESE_DB.map(function(c){return'<div class="cc" onclick="selectCheese(this,\''+c.name+'\')"><div style="font-size:1.5rem">'+c.emoji+'</div><div style="font-size:.72rem;font-weight:800;margin-top:4px">'+c.name+'</div></div>'}).join("");
+if(typeof CHEESE_DB==="undefined"||!CHEESE_DB){el.innerHTML="<div class=\"card tc\">Cheese data loading...</div>";return;}
+el.innerHTML=CHEESE_DB.map(function(c){return "<div class=\"cc\" onclick=\"selectCheese(this,'"+c.name+"')\"><div style=\"font-size:1.8rem\">"+c.emoji+"</div><div style=\"font-size:.78rem;font-weight:700;margin-top:4px\">"+c.name+"</div></div>"}).join("");
 }
 function selectCheese(el,name){
 document.querySelectorAll("#cheese-grid .cc").forEach(function(c){c.classList.remove("selected")});
@@ -251,7 +237,7 @@ if(typeof CHEESE_DB==="undefined")return;
 var cheese=CHEESE_DB.find(function(c){return c.name===name});
 if(!cheese)return;
 var rEl=document.getElementById("cheese-results");if(!rEl)return;
-rEl.innerHTML='<div class="card bounce"><h3>'+cheese.emoji+' '+cheese.name+'</h3><p style="color:#999;margin:6px 0">'+cheese.desc+'</p><div class="mt2">'+cheese.wines.map(function(w){var wd=WINE_DB[w]||{};return'<button class="btn btn-xs btn-ghost" onclick="demoScan(\''+w+'\')" style="margin:2px">'+(wd.emoji||"")+' '+(wd.name||w)+'</button>'}).join("")+'</div></div>';
+rEl.innerHTML="<div class=\"card\"><h3 style=\"font-weight:900\">"+cheese.emoji+" "+cheese.name+"</h3><p style=\"color:#7A8A8A;margin:6px 0\">"+cheese.desc+"</p><div style=\"margin-top:8px\">"+cheese.wines.map(function(w){var wd=WINE_DB[w]||{};return "<span class=\"badge badge-coral\" onclick=\"showWineResult('"+w+"','cheese')\" style=\"cursor:pointer\">"+(wd.emoji||"")+" "+(wd.name||w)+"</span>"}).join(" ")+"</div></div>";
 }
 
 /* ===== HANGOVER ===== */
@@ -269,11 +255,11 @@ if(el){el.textContent=bac+"%";el.style.color=bac>0.05?"var(--coral)":"var(--mint
 var tips=document.getElementById("hangover-tips");
 if(!tips)return;
 if(drinks===0){tips.innerHTML="";return;}
-var h='<div class="sect">Tips</div>';
-h+='<div class="co">Drink '+drinks+' glass'+(drinks>1?"es":"")+' of water before bed</div>';
-if(drinks>=3)h+='<div class="co">Eat something carby before sleeping</div>';
-if(drinks>=5)h+='<div class="co">Tomorrow you: take ibuprofen + electrolytes + sleep in</div>';
-h+='<div class="co">Estimated time to sober: ~'+(drinks*1.5).toFixed(1)+' hours</div>';
+var h="<div class=\"sect\">Tips</div>";
+h+="<div class=\"card\">Drink "+drinks+" glass"+(drinks>1?"es":"")+" of water before bed</div>";
+if(drinks>=3)h+="<div class=\"card\">Eat something carby before sleeping</div>";
+if(drinks>=5)h+="<div class=\"card\">Tomorrow you: take ibuprofen + electrolytes + sleep in</div>";
+h+="<div class=\"card\" style=\"background:var(--sunbg)\">Estimated time to sober: ~"+(drinks*1.5).toFixed(1)+" hours</div>";
 tips.innerHTML=h;
 }
 
@@ -293,7 +279,8 @@ function renderPronunciation(){
 var el=document.getElementById("pron-list");if(!el)return;
 if(typeof PRONUNCIATION_DB==="undefined")return;
 el.innerHTML=PRONUNCIATION_DB.map(function(p){
-return'<div class="gi" onclick="speak(\''+p.word+'\')"><div class="gi-c" style="background:var(--lilac)">'+String.fromCodePoint(0x1F5E3)+'</div><div class="gi-i"><div class="gi-n">'+p.word+'</div><div class="gi-s">'+p.phonetic+' · '+p.lang+'</div></div></div>'}).join("");
+return "<div class=\"gi\" onclick=\"speak('"+p.word+"')\"><div class=\"gi-c\" style=\"background:var(--lilac)\">"+String.fromCodePoint(0x1F5E3)+"</div><div class=\"gi-i\"><div class=\"gi-n\">"+p.word+"</div><div class=\"gi-s\">"+p.phonetic+" · "+p.lang+"</div></div></div>";
+}).join("");
 }
 function speak(text){
 if(window.speechSynthesis){var u=new SpeechSynthesisUtterance(text);u.rate=0.8;u.lang="en-AU";window.speechSynthesis.speak(u);}
@@ -306,7 +293,8 @@ if(typeof DINNER_PARTY_DB==="undefined")return;
 var courses=DINNER_PARTY_DB.courses.slice(0,num);
 el.innerHTML=courses.map(function(c,i){
 var jp=c.jovalPick?JOVAL_WINES.find(function(j){return j.name===c.jovalPick}):null;
-return'<div class="co"><div style="font-weight:900;color:var(--purple);font-size:.7rem;letter-spacing:1px">COURSE '+(i+1)+'</div><h3 style="margin:4px 0;font-weight:900">'+c.course+'</h3><p style="color:#999;margin:4px 0;font-size:.85rem">'+c.desc+'</p><div style="margin-top:6px">'+c.wines.map(function(w){var wd=WINE_DB[w]||{};return'<button class="btn btn-xs btn-ghost" onclick="demoScan(\''+w+'\')" style="margin:2px">'+(wd.emoji||"")+' '+(wd.name||w)+'</button>'}).join("")+'</div>'+(jp?'<div style="margin-top:6px"><span class="joval-tag">JOVAL</span> <span style="font-weight:700;font-size:.82rem">'+jp.name+'</span> <span class="price-tag" style="font-size:.9rem">$'+jp.price+'</span></div>':'')+'</div>'}).join("");
+return "<div class=\"card\" style=\"border-left:4px solid var(--coral)\"><div style=\"font-size:.65rem;color:var(--purple);font-weight:900;letter-spacing:2px\">COURSE "+(i+1)+"</div><h4 style=\"font-weight:900;margin:4px 0\">"+c.course+"</h4><p style=\"font-size:.85rem;color:#7A8A8A;margin:4px 0\">"+c.desc+"</p><div style=\"margin:6px 0\">"+c.wines.map(function(w){var wd=WINE_DB[w]||{};return "<span class=\"badge badge-coral\">"+(wd.emoji||"")+" "+(wd.name||w)+"</span>"}).join(" ")+"</div>"+(jp?"<div style=\"background:var(--sunbg);padding:10px 14px;border-radius:12px\"><span class=\"joval-tag\">JOVAL</span> <strong>"+jp.name+"</strong> <span class=\"price-tag\">$"+jp.price+"</span></div>":"")+"</div>";
+}).join("");
 }
 
 /* ===== SEASON ===== */
@@ -315,7 +303,7 @@ var el=document.getElementById("season-content");if(!el)return;
 if(typeof SEASON_DB==="undefined"||typeof getSeason==="undefined")return;
 var s=getSeason();var sd=SEASON_DB[s];if(!sd)return;
 var jp=sd.jovalPick?JOVAL_WINES.find(function(j){return j.name===sd.jovalPick}):null;
-el.innerHTML='<div class="card tc bounce"><div style="font-size:3rem">'+sd.emoji+'</div><h2 style="font-weight:900;margin:8px 0">'+sd.name+'</h2><p style="color:#999">'+sd.desc+'</p></div><div class="mt2">'+sd.wines.map(function(w){var wd=WINE_DB[w]||{};return'<button class="btn btn-ghost mb2" onclick="demoScan(\''+w+'\')" style="text-align:left;width:100%">'+(wd.emoji||"")+' '+(wd.name||w)+'</button>'}).join("")+'</div>'+(jp?'<div class="card-sun" style="border-radius:var(--r);margin-top:12px"><span class="joval-tag">JOVAL</span> <strong>'+jp.name+'</strong> <span class="price-tag">$'+jp.price+'</span></div>':'');
+el.innerHTML="<div class=\"rh\" style=\"background:var(--peach)\"><div style=\"font-size:3rem\">"+sd.emoji+"</div><h3 style=\"font-weight:900\">"+sd.name+"</h3></div><div class=\"pad\"><p style=\"font-size:1rem;line-height:1.7\">"+sd.desc+"</p><div style=\"margin:12px 0\">"+sd.wines.map(function(w){var wd=WINE_DB[w]||{};return "<span class=\"badge badge-coral\" onclick=\"showWineResult('"+w+"','season')\" style=\"cursor:pointer\">"+(wd.emoji||"")+" "+(wd.name||w)+"</span>"}).join(" ")+"</div>"+(jp?"<div style=\"background:var(--sunbg);padding:10px 14px;border-radius:12px\"><span class=\"joval-tag\">JOVAL</span> <strong>"+jp.name+"</strong> <span class=\"price-tag\">$"+jp.price+"</span></div>":"")+"</div>";
 }
 
 /* ===== GIFT ===== */
@@ -326,7 +314,7 @@ if(typeof GIFT_DB==="undefined")return;
 var g=GIFT_DB[type];if(!g)return;
 var jp=g.jovalPick?JOVAL_WINES.find(function(j){return j.name===g.jovalPick}):null;
 var rEl=document.getElementById("gift-results");if(!rEl)return;
-rEl.innerHTML='<div class="card bounce"><h3>'+g.emoji+' Perfect for them</h3><p style="color:#999;margin:6px 0">'+g.desc+'</p>'+(jp?'<div style="margin:8px 0"><span class="joval-tag">JOVAL</span> <strong>'+jp.name+'</strong> <span class="price-tag">$'+jp.price+'</span> '+cartBtn(jp.id,"xs")+'</div>':'')+'<div class="mt2">'+g.wines.map(function(w){var wd=WINE_DB[w]||{};return'<button class="btn btn-xs btn-ghost" onclick="demoScan(\''+w+'\')" style="margin:2px">'+(wd.emoji||"")+' '+(wd.name||w)+'</button>'}).join("")+'</div></div>';
+rEl.innerHTML="<div class=\"card\"><h3 style=\"font-weight:900\">"+g.emoji+" Perfect for them</h3><p style=\"color:#7A8A8A;margin:6px 0\">"+g.desc+"</p>"+(jp?"<div style=\"background:var(--sunbg);padding:10px 14px;border-radius:12px;margin:8px 0\"><span class=\"joval-tag\">JOVAL</span> <strong>"+jp.name+"</strong> <span class=\"price-tag\">$"+jp.price+"</span> "+cartBtn(jp.id,"xs")+"</div>":"")+"<div style=\"margin-top:8px\">"+g.wines.map(function(w){var wd=WINE_DB[w]||{};return "<span class=\"badge badge-coral\">"+(wd.emoji||"")+" "+(wd.name||w)+"</span>"}).join(" ")+"</div></div>";
 }
 
 /* ===== MUSIC ===== */
@@ -335,14 +323,15 @@ var el=document.getElementById("music-list");if(!el)return;
 if(typeof MUSIC_DB==="undefined")return;
 el.innerHTML=MUSIC_DB.map(function(m){
 var wd=WINE_DB[m.grape]||{};
-return'<div class="gi" onclick="demoScan(\''+m.grape+'\')"><div class="gi-c" style="background:var(--lilac)">'+String.fromCodePoint(0x1F3B5)+'</div><div class="gi-i"><div class="gi-n">'+(wd.name||m.grape)+' = '+m.genre+'</div><div class="gi-s">'+m.artist+' - '+m.song+'</div><div style="font-size:.75rem;color:var(--purple);margin-top:3px;font-weight:600">'+m.why+'</div></div></div>'}).join("");
+return "<div class=\"card\"><div style=\"display:flex;align-items:center;gap:10px\"><span style=\"font-size:1.5rem\">"+String.fromCodePoint(0x1F3B5)+"</span><div><strong>"+(wd.name||m.grape)+" = "+m.genre+"</strong><div style=\"font-size:.82rem;color:#7A8A8A\">"+m.artist+" - "+m.song+"</div></div></div><p style=\"font-size:.82rem;color:#7A8A8A;margin-top:6px\">"+m.why+"</p></div>";
+}).join("");
 }
 
 /* ===== CELLAR ===== */
 function renderCellar(){
 var el=document.getElementById("cellar-grid");if(!el)return;
-if(!state.cellar.length){el.innerHTML='<div class="tc" style="grid-column:1/-1;color:#999;padding:20px">Cellar empty</div>';return;}
-el.innerHTML=state.cellar.map(function(c){return'<div class="cc" onclick="demoScan(\''+c.key+'\')"><div style="font-size:1.5rem">'+(c.emoji||String.fromCodePoint(0x1F377))+'</div><div style="font-size:.65rem;font-weight:800;margin-top:4px">'+(c.name||c.key)+'</div></div>'}).join("");
+if(!state.cellar.length){el.innerHTML="<div class=\"card tc\"><p style=\"color:#7A8A8A\">Cellar empty</p></div>";return;}
+el.innerHTML=state.cellar.map(function(c){return "<div class=\"gi\" onclick=\"showWineResult('"+c.key+"','cellar')\"><div class=\"gi-c\" style=\"background:var(--peach)\">"+(c.emoji||String.fromCodePoint(0x1F377))+"</div><div class=\"gi-i\"><div class=\"gi-n\">"+(c.name||c.key)+"</div></div></div>"}).join("");
 }
 function addToCellar(){
 if(!state.currentWine){showToast("Scan a wine first!");return;}
@@ -354,8 +343,8 @@ saveState();showToast("Added to cellar!");addXP(2);checkBadges();
 /* ===== SOCIAL ===== */
 function renderSocial(){
 var el=document.getElementById("social-feed");if(!el)return;
-if(!state.socialPosts||!state.socialPosts.length){el.innerHTML='<div class="tc" style="color:#999;padding:20px">No posts yet. Share a wine!</div>';return;}
-el.innerHTML=state.socialPosts.map(function(p){return'<div class="rc"><strong>'+p.wine+'</strong><p style="font-size:.82rem;color:#999;margin-top:3px">'+new Date(p.date).toLocaleDateString()+'</p></div>'}).join("");
+if(!state.socialPosts||!state.socialPosts.length){el.innerHTML="<div class=\"card tc\"><p style=\"color:#7A8A8A\">No posts yet. Share a wine!</p></div>";return;}
+el.innerHTML=state.socialPosts.map(function(p){return "<div class=\"card\"><strong>"+p.wine+"</strong><div style=\"font-size:.78rem;color:#7A8A8A\">"+new Date(p.date).toLocaleDateString()+"</div></div>"}).join("");
 }
 function shareWine(){
 if(!state.currentWine){showToast("Scan a wine first!");return;}
@@ -386,7 +375,7 @@ else if(topic.indexOf("budget")>-1||topic.indexOf("cheap")>-1)key="gamay";
 else if(topic.indexOf("white")>-1)key="sauvignon_blanc";
 else if(topic.indexOf("fish")>-1||topic.indexOf("seafood")>-1)key="chardonnay";
 var w=WINE_DB[key]||{};
-el.innerHTML='<h3>'+w.emoji+' '+w.name+'</h3><p style="color:#999;margin:6px 0;font-size:.9rem">'+w.plainEnglish+'</p><button class="btn btn-sm btn-purple" onclick="demoScan(\''+key+'\')">Details</button>';
+el.innerHTML="<div class=\"card\"><h3 style=\"font-weight:900\">"+w.emoji+" "+w.name+"</h3><p style=\"color:#7A8A8A;margin:6px 0\">"+w.plainEnglish+"</p><button class=\"btn btn-coral btn-sm\" onclick=\"showWineResult('"+key+"','voice')\">Details</button></div>";
 }
 
 /* ===== COMPARE ===== */
@@ -394,7 +383,7 @@ function populateCompare(){
 var a=document.getElementById("compare-a");
 var b=document.getElementById("compare-b");
 if(!a||!b)return;
-var opts=Object.keys(WINE_DB).map(function(k){return'<option value="'+k+'">'+WINE_DB[k].name+'</option>'}).join("");
+var opts=Object.keys(WINE_DB).map(function(k){return "<option value=\""+k+"\">"+WINE_DB[k].name+"</option>"}).join("");
 a.innerHTML=opts;b.innerHTML=opts;
 if(b.options.length>1)b.selectedIndex=1;
 }
@@ -405,15 +394,16 @@ var a=WINE_DB[ka],b=WINE_DB[kb];if(!a||!b)return;
 var el=document.getElementById("compare-output");if(!el)return;
 var bars=["body","sweetness","acidity","tannin","alcohol"];
 var labels=["Body","Sweet","Zing","Grip","Booze"];
-el.innerHTML='<div class="card"><div style="display:flex;justify-content:space-between;margin-bottom:12px"><strong>'+a.emoji+' '+a.name+'</strong><strong>'+b.emoji+' '+b.name+'</strong></div>'+bars.map(function(k,i){return'<div style="margin-bottom:8px"><div style="font-size:.7rem;color:#999;font-weight:700;text-align:center">'+labels[i]+'</div><div style="display:flex;gap:4px;align-items:center"><div style="flex:1;height:8px;background:#f0e8e0;border-radius:4px;overflow:hidden;direction:rtl"><div style="width:'+a[k]*20+'%;height:100%;background:var(--coral);border-radius:4px"></div></div><div style="width:30px;text-align:center;font-size:.7rem;font-weight:800">'+a[k]+'/'+b[k]+'</div><div style="flex:1;height:8px;background:#f0e8e0;border-radius:4px;overflow:hidden"><div style="width:'+b[k]*20+'%;height:100%;background:var(--purple);border-radius:4px"></div></div></div></div>'}).join("")+'</div>';
+el.innerHTML="<div style=\"display:flex;justify-content:space-between;margin-bottom:12px\"><strong>"+a.emoji+" "+a.name+"</strong><strong>"+b.emoji+" "+b.name+"</strong></div>"+bars.map(function(k,i){return "<div class=\"tm\"><span class=\"tml\">"+labels[i]+"</span><div class=\"tmb\" style=\"flex:1\"><div class=\"tmf\" style=\"width:"+(a[k]/5*100)+"%;background:var(--coral)\"></div></div><div class=\"tmb\" style=\"flex:1\"><div class=\"tmf\" style=\"width:"+(b[k]/5*100)+"%;background:var(--purple)\"></div></div><span style=\"font-size:.7rem;color:#7A8A8A\">"+a[k]+"/"+b[k]+"</span></div>"}).join("");
 }
 
 /* ===== KIDS ===== */
 function renderKids(){
 var el=document.getElementById("kids-list");if(!el)return;
-if(typeof KIDS_MEALS_DB==="undefined"){el.innerHTML='<div class="tc" style="color:#999;padding:20px">Kids meals loading...</div>';return;}
-el.innerHTML='<div class="sect">Kids eat, you sip</div>'+KIDS_MEALS_DB.map(function(m){
-return'<div class="mi"><div style="font-size:1.8rem;flex-shrink:0">'+m.emoji+'</div><div style="flex:1"><div style="font-weight:800;font-size:.9rem">'+m.name+'</div><div style="margin-top:6px">'+m.wines.map(function(w){var wd=WINE_DB[w]||{};return'<button class="btn btn-xs btn-ghost" onclick="demoScan(\''+w+'\')" style="margin:2px">'+(wd.emoji||"")+' '+(wd.name||w)+'</button>'}).join("")+'</div></div></div>'}).join("");
+if(typeof KIDS_MEALS_DB==="undefined"){el.innerHTML="<div class=\"card tc\">Kids meals loading...</div>";return;}
+el.innerHTML="<div class=\"sect\">Kids eat, you sip</div>"+KIDS_MEALS_DB.map(function(m){
+return "<div class=\"card\"><div style=\"display:flex;align-items:center;gap:10px;margin-bottom:6px\"><span style=\"font-size:1.5rem\">"+m.emoji+"</span><strong>"+m.name+"</strong></div><div>"+m.wines.map(function(w){var wd=WINE_DB[w]||{};return "<span class=\"badge badge-coral\">"+(wd.emoji||"")+" "+(wd.name||w)+"</span>"}).join(" ")+"</div></div>";
+}).join("");
 }
 
 /* ===== TIMELINE ===== */
@@ -429,7 +419,6 @@ if(fav)fav.textContent=state.favorites.length>0?(WINE_DB[state.favorites[0]]||{}
 
 /* ===== ADMIN ===== */
 function openAdmin(){nav("screen-admin");renderAdmin();}
-
 function renderAdmin(){
 var el;
 el=document.getElementById("admin-scans");if(el)el.textContent=state.totalScans||0;
@@ -439,12 +428,11 @@ el=document.getElementById("admin-revenue");if(el)el.textContent="$"+(state.tota
 el=document.getElementById("admin-coupons");if(el)el.textContent=state.totalCouponsUsed||0;
 el=document.getElementById("admin-favs");if(el)el.textContent=state.favorites.length;
 var sel=document.getElementById("admin-featured-select");
-if(sel){sel.innerHTML=Object.keys(WINE_DB).map(function(k){return'<option value="'+k+'"'+(state.featuredWine===k?' selected':'')+'>'+WINE_DB[k].name+'</option>'}).join("");}
+if(sel){sel.innerHTML=Object.keys(WINE_DB).map(function(k){return "<option value=\""+k+"\">"+WINE_DB[k].name+"</option>"}).join("");}
 var stockSel=document.getElementById("admin-stock-wine");
-if(stockSel){stockSel.innerHTML=JOVAL_WINES.map(function(j){return'<option value="'+j.id+'">'+j.name+' ('+getStock(j.id)+')</option>'}).join("");}
+if(stockSel){stockSel.innerHTML=JOVAL_WINES.map(function(j){return "<option value=\""+j.id+"\">"+j.name+" ("+getStock(j.id)+")</option>"}).join("");}
 renderAdminStock();renderAdminOrders();renderAdminPromos();renderAdminMarketing();
 }
-
 function showAdminTab(tab,btn){
 ["dashboard","stock","orders","promos","marketing"].forEach(function(t){
 var el=document.getElementById("admin-tab-"+t);
@@ -453,46 +441,45 @@ if(el){if(t===tab)el.classList.remove("hid");else el.classList.add("hid");}
 document.querySelectorAll("#screen-admin .mc").forEach(function(b){b.classList.remove("active")});
 if(btn)btn.classList.add("active");
 }
-
 function renderAdminStock(){
 var el=document.getElementById("admin-stock-summary");if(!el)return;
 var total=0,low=0;
 JOVAL_WINES.forEach(function(j){var s=getStock(j.id);total+=s;if(s<=5)low++});
-el.innerHTML='<p>Total units: <strong>'+total+'</strong></p><p>Low stock items: <strong style="color:var(--coral)">'+low+'</strong></p>';
+el.innerHTML="<p>Total units: <strong>"+total+"</strong></p><p>Low stock items: <strong style=\"color:"+(low>0?"var(--coral)":"var(--sage)")+"\">"+low+"</strong></p>";
 var lowEl=document.getElementById("admin-low-stock");
 if(lowEl){
 var lowItems=JOVAL_WINES.filter(function(j){return getStock(j.id)<=5});
-lowEl.innerHTML=lowItems.length?lowItems.map(function(j){return'<div class="rc">'+j.name+' <span class="stock-low">'+getStock(j.id)+' left</span></div>'}).join(""):'<p style="color:var(--mint)">All stocked up!</p>';}
+lowEl.innerHTML=lowItems.length?lowItems.map(function(j){return "<div class=\"gi\"><div class=\"gi-c\" style=\"background:var(--peach)\">"+String.fromCodePoint(0x1F377)+"</div><div class=\"gi-i\"><div class=\"gi-n\">"+j.name+"</div><div class=\"gi-s\" style=\"color:var(--coral)\">"+getStock(j.id)+" left</div></div></div>"}).join(""):"<div class=\"card tc\" style=\"color:var(--sage)\">All stocked up!</div>";}
 }
-
 function updateStock(){
 var id=parseInt(document.getElementById("admin-stock-wine").value);
 var qty=parseInt(document.getElementById("admin-stock-qty").value);
 if(!id||isNaN(qty)){showToast("Enter valid values");return;}
-state.stockLevels[id]=qty;saveState();showToast("Stock updated!");renderAdmin();
+if(!state.stock)state.stock={};
+if(!state.stock[id])state.stock[id]={qty:0,reserved:0};
+state.stock[id].qty=qty;
+saveState();showToast("Stock updated!");renderAdmin();
 }
-
 function renderAdminOrders(){
 var el=document.getElementById("admin-order-list");if(!el)return;
-if(!state.orders.length){el.innerHTML='<p style="color:#999">No orders yet</p>';return;}
+if(!state.orders.length){el.innerHTML="<div class=\"card tc\" style=\"color:#7A8A8A\">No orders yet</div>";return;}
 el.innerHTML=state.orders.slice(-10).reverse().map(function(o){
-return'<div class="rc"><strong>#'+o.id+'</strong> - $'+o.total.toFixed(2)+'<br><span style="font-size:.75rem;color:#999">'+o.name+' · '+new Date(o.date).toLocaleDateString()+'</span></div>'}).join("");
+return "<div class=\"card\"><div style=\"display:flex;justify-content:space-between\"><strong>#"+o.id+"</strong><span style=\"font-weight:900;color:var(--coral)\">$"+o.total.toFixed(2)+"</span></div><div style=\"font-size:.78rem;color:#7A8A8A\">"+o.name+" · "+new Date(o.date).toLocaleDateString()+"</div></div>";
+}).join("");
 var stats=document.getElementById("admin-order-stats");
 if(stats){var avg=state.orders.length?(state.totalRevenue/state.orders.length).toFixed(2):0;
-stats.innerHTML='<p>Avg order: <strong>$'+avg+'</strong></p><p>Total orders: <strong>'+state.orders.length+'</strong></p>';}
+stats.innerHTML="<p>Avg order: <strong>$"+avg+"</strong></p><p>Total orders: <strong>"+state.orders.length+"</strong></p>";}
 }
-
 function renderAdminPromos(){
 var el=document.getElementById("admin-coupon-list");if(!el)return;
 el.innerHTML=state.adminCoupons.length?state.adminCoupons.map(function(c){
-return'<div class="rc"><strong>'+c.code+'</strong> - '+c.pct+(c.type==="dollar"?"$":"%")+' off'+(c.used?' <span class="badge badge-pink">Used</span>':'')+'</div>'}).join(""):'<p style="color:#999">No promos</p>';
+return "<div class=\"card\"><strong>"+c.code+"</strong> - "+c.pct+(c.type==="dollar"?"$":"%")+" off"+(c.used?" <span style=\"color:#aaa\">(Used)</span>":"")+"</div>";
+}).join(""):"<div class=\"card tc\" style=\"color:#7A8A8A\">No promos</div>";
 }
-
 function setFeaturedWine(){
 var sel=document.getElementById("admin-featured-select");
 if(sel){state.featuredWine=sel.value;saveState();updateWOTDHome();showToast("Featured wine updated!");}
 }
-
 function createCoupon(){
 var code=(document.getElementById("admin-coupon-code").value||"").toUpperCase().trim();
 var pct=parseInt(document.getElementById("admin-coupon-pct").value);
@@ -504,22 +491,19 @@ saveState();showToast("Promo created!");renderAdmin();
 document.getElementById("admin-coupon-code").value="";
 document.getElementById("admin-coupon-pct").value="";
 }
-
 function setPromoBanner(){
 var text=(document.getElementById("admin-banner-text").value||"").trim();
 var link=(document.getElementById("admin-banner-link").value||"screen-explore").trim();
 state.promoBanner={text:text,link:link};saveState();showToast("Banner set!");
 }
-
 function renderAdminMarketing(){
 var el=document.getElementById("admin-email-count");
 if(el)el.textContent=state.emailSubs.length;
 var list=document.getElementById("admin-email-list");
-if(list)list.innerHTML=state.emailSubs.map(function(e){return'<div class="rc">'+e+'</div>'}).join("");
+if(list)list.innerHTML=state.emailSubs.map(function(e){return "<div style=\"font-size:.82rem;padding:4px 0;border-bottom:1px solid #eee\">"+e+"</div>"}).join("");
 var refList=document.getElementById("admin-ref-list");
-if(refList)refList.innerHTML=(state.referrals||[]).map(function(r){return'<div class="rc"><strong>'+r.code+'</strong> - '+r.reward+'% reward</div>'}).join("");
+if(refList)refList.innerHTML=(state.referrals||[]).map(function(r){return "<div class=\"card\"><strong>"+r.code+"</strong> - "+r.reward+"% reward</div>"}).join("");
 }
-
 function createReferral(){
 var code=(document.getElementById("admin-ref-code").value||"").toUpperCase().trim();
 var reward=parseInt(document.getElementById("admin-ref-reward").value)||10;
@@ -528,7 +512,6 @@ if(!state.referrals)state.referrals=[];
 state.referrals.push({code:code,reward:reward});
 saveState();showToast("Referral created!");renderAdminMarketing();
 }
-
 function sendPush(){
 var msg=(document.getElementById("admin-push-msg").value||"").trim();
 if(!msg){showToast("Enter a message!");return;}
@@ -563,5 +546,11 @@ try{renderFavorites()}catch(e){}
 try{renderMeals()}catch(e){}
 try{renderChallenge()}catch(e){}
 try{initShake()}catch(e){}
+try{renderFeed()}catch(e){}
+try{renderAdventures()}catch(e){}
+try{renderRestaurant()}catch(e){}
+try{renderCrew()}catch(e){}
+try{renderJournal()}catch(e){}
+try{renderTasteDNA()}catch(e){}
 try{addXP(0)}catch(e){}
 });

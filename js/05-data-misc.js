@@ -1,4 +1,4 @@
-/* Slurper v4 - Misc Data - FIXED */
+/* Slurper v5 - Misc Data - FIXED */
 var LABEL_TERMS=["Terroir","Tannin","Appellation","Cuv\u00e9e","Brut","Demi-Sec","Grand Cru","Premier Cru","Reserva","Crianza","Denominazione","Classico","Superiore","Riserva","Sp\u00e4tlese","Auslese","Trocken","Kabinett","Vendange Tardive","Botrytis","Mise en Bouteille","Ch\u00e2teau","Domaine","Bodega","Tenuta","Weingut","Clos","Vignoble","Estate","Single Vineyard"];
 
 var VIBES_DB={
@@ -139,4 +139,52 @@ var MUSIC_DB=[
 {grape:"touriga_nacional",genre:"Fado",artist:"Am\u00e1lia Rodrigues",song:"Estranha Forma de Vida",why:"Portuguese soul, deep and melancholic"},
 {grape:"albarino",genre:"Surf Rock",artist:"Beach Boys",song:"Good Vibrations",why:"Salty, breezy, and beachy"},
 {grape:"pinot_grigio",genre:"Lounge",artist:"Sade",song:"Smooth Operator",why:"Light, easy, and effortlessly stylish"}
+];
+
+
+/* ===== v5 NEW DATA ===== */
+var ADVENTURES_DB=[
+{id:"tour_de_france",name:"Tour de France",emoji:"\u{1F1EB}\u{1F1F7}",desc:"Try 5 iconic French wines",wines:["pinot_noir","chardonnay","cabernet_sauvignon","grenache","chenin_blanc"],reward:25},
+{id:"italian_job",name:"The Italian Job",emoji:"\u{1F1EE}\u{1F1F9}",desc:"Try 5 classic Italian grapes",wines:["nebbiolo","sangiovese","barbera","pinot_grigio","primitivo"],reward:25},
+{id:"aussie_odyssey",name:"Aussie Odyssey",emoji:"\u{1F1E6}\u{1F1FA}",desc:"Try 5 Australian favourites",wines:["shiraz","semillon","chardonnay","grenache","riesling"],reward:25},
+{id:"southern_stars",name:"Southern Stars",emoji:"\u2B50",desc:"Wines from the Southern Hemisphere",wines:["malbec","pinotage","torrontes","carmenere","sauvignon_blanc"],reward:20},
+{id:"bold_beautiful",name:"Bold & Beautiful",emoji:"\u{1F4AA}",desc:"Try 5 full-bodied reds",wines:["cabernet_sauvignon","shiraz","mourvedre","nebbiolo","touriga_nacional"],reward:20},
+{id:"light_bright",name:"Light & Bright",emoji:"\u2728",desc:"Try 5 crisp refreshing whites",wines:["sauvignon_blanc","riesling","pinot_grigio","albarino","gruner_veltliner"],reward:20}
+];
+
+var RESTAURANT_DB={
+date_night:{name:"Date Night",emoji:"\u{1F495}",courses:[
+{course:"Bubbles to Start",wines:["chardonnay","muscat"],jovalPick:"Audrey Wilkinson Brut Reserve NV"},
+{course:"Shared Entree",wines:["sauvignon_blanc","pinot_grigio"],jovalPick:"Sigalas Assyrtiko"},
+{course:"Mains",wines:["pinot_noir","grenache"],jovalPick:"Yabby Lake Pinot Noir"},
+{course:"Dessert",wines:["muscat","riesling"],jovalPick:"Audrey Wilkinson Moscato"}
+]},
+business_dinner:{name:"Business Dinner",emoji:"\u{1F454}",courses:[
+{course:"Aperitif",wines:["chardonnay","gruner_veltliner"],jovalPick:"Audrey Wilkinson Brut Reserve NV"},
+{course:"Entree",wines:["riesling","chardonnay"],jovalPick:"Craggy Range Kidnappers Chardonnay"},
+{course:"Main",wines:["cabernet_sauvignon","nebbiolo"],jovalPick:"Alkoomi Icon Blackbutt Cabernet Sauvignon"},
+{course:"Cheese",wines:["pinot_noir","nebbiolo"],jovalPick:"Heathcote Estate Nebbiolo"}
+]},
+family_celebration:{name:"Family Celebration",emoji:"\u{1F389}",courses:[
+{course:"Welcome Drinks",wines:["sauvignon_blanc","gamay"],jovalPick:"All Saints Estate Prosecco NV"},
+{course:"Starters",wines:["riesling","sauvignon_blanc"],jovalPick:"Shaw Smith Sauvignon Blanc"},
+{course:"Roast",wines:["shiraz","cabernet_sauvignon"],jovalPick:"Shaw Smith Shiraz"},
+{course:"Dessert",wines:["muscat","riesling"],jovalPick:"All Saints The Keep Tawny Port"}
+]},
+quick_lunch:{name:"Quick Lunch",emoji:"\u{1F96A}",courses:[
+{course:"Glass with Lunch",wines:["sauvignon_blanc","pinot_grigio","gamay"],jovalPick:"Printhie Mountain Range Sauvignon Blanc"}
+]},
+wine_bar:{name:"Wine Bar",emoji:"\u{1F377}",courses:[
+{course:"By the Glass - White",wines:["chardonnay","riesling","sauvignon_blanc"],jovalPick:"Rising Chardonnay"},
+{course:"By the Glass - Red",wines:["pinot_noir","grenache","shiraz"],jovalPick:"In Dreams Pinot Noir"},
+{course:"Something Different",wines:["gewurztraminer","torrontes","gruner_veltliner"],jovalPick:"Pollen Gewurztraminer"}
+]}
+};
+
+var JOURNAL_MOODS=[
+{emoji:"\u{1F60D}",label:"Amazing"},
+{emoji:"\u{1F60B}",label:"Delicious"},
+{emoji:"\u{1F60A}",label:"Nice"},
+{emoji:"\u{1F914}",label:"Interesting"},
+{emoji:"\u{1F974}",label:"Not for me"}
 ];
